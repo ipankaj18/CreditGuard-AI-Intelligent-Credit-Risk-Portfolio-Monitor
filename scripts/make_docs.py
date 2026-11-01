@@ -69,4 +69,8 @@ def solution():
 
 
 if __name__ == "__main__":
-    architecture(); solution(); print("Created one-page architecture and solution overview PDFs")
+    from make_docs_v2 import architecture as architecture_v2, solution as solution_v2
+
+    architecture_v2()
+    solution_v2()
+    print("Created polished one-page architecture and solution overview PDFs")
