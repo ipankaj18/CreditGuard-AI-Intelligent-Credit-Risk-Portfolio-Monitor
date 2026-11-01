@@ -43,13 +43,17 @@ def answer_question(data: pd.DataFrame, question: str, api_key: str | None = Non
     else:
         return "I can’t answer that reliably from the available portfolio fields. Try asking about default rate, exposure, or account counts by loan type, region, employment, age, income, or risk segment."
 
-    key = api_key or os.getenv("OPENAI_API_KEY")
+    key = api_key or os.getenv("OPENROUTER_API_KEY")
     if not key:
         return fact
     try:
         from openai import OpenAI
-        response = OpenAI(api_key=key).chat.completions.create(
-            model=model or os.getenv("OPENAI_MODEL", "gpt-4o-mini"), temperature=0,
+        response = OpenAI(
+            api_key=key,
+            base_url="https://openrouter.ai/api/v1",
+            default_headers={"X-Title": "CreditGuard AI"},
+        ).chat.completions.create(
+            model=model or os.getenv("OPENROUTER_MODEL", "openrouter/free"), temperature=0,
             messages=[
                 {"role": "system", "content": "Rewrite the supplied verified fact in concise analyst-friendly English. Do not add, infer, or change any number. Preserve the source statement."},
                 {"role": "user", "content": f"Question: {question}\nVerified fact: {fact}"},
@@ -57,4 +61,4 @@ def answer_question(data: pd.DataFrame, question: str, api_key: str | None = Non
         )
         return response.choices[0].message.content or fact
     except Exception:
-        return fact + " (LLM unavailable; deterministic grounded answer shown.)"
+        return fact + " (OpenRouter unavailable or rate-limited; deterministic grounded answer shown.)"

@@ -38,12 +38,12 @@ def architecture():
     t.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,-1),colors.HexColor("#EAF3F5")),("BOX",(0,0),(-1,-1),1,colors.HexColor("#0B5A70")),("INNERGRID",(0,0),(-1,-1),.5,colors.white),("VALIGN",(0,0),(-1,-1),"TOP"),("LEFTPADDING",(0,0),(-1,-1),7),("RIGHTPADDING",(0,0),(-1,-1),7),("TOPPADDING",(0,0),(-1,-1),7)]))
     story += [t, Spacer(1, 5*mm), Paragraph("Embedded AI controls", styles["H2x"])]
     ai = [
-        [Paragraph("<b>Ask the Portfolio</b>", styles["Small"]), Paragraph("Question → allow-listed intent/dimension → pandas aggregation over active filters → verified fact → optional OpenAI call for wording only. The LLM receives the question and computed fact, never raw customer rows. Unsupported questions are declined; deterministic answer remains available without a key.", styles["Small"])],
+        [Paragraph("<b>Ask the Portfolio</b>", styles["Small"]), Paragraph("Question → allow-listed intent/dimension → pandas aggregation over active filters → verified fact → OpenRouter free-model call for wording only. OpenRouter receives the question and computed fact, never raw customer rows. Unsupported questions are declined; deterministic fallback remains available without a key or during rate limits.", styles["Small"])],
         [Paragraph("<b>Anomaly detection</b>", styles["Small"]), Paragraph("Account features → loan-type × income-band peer cohort → median/MAD robust score → reason code → analyst Confirm/Dismiss. No LLM and no automated adverse action. Review state should move to an authenticated database in production.", styles["Small"])],
     ]
     at = Table(ai, colWidths=[45*mm, 225*mm])
     at.setStyle(TableStyle([("GRID",(0,0),(-1,-1),.5,colors.HexColor("#9AB8C1")),("VALIGN",(0,0),(-1,-1),"TOP"),("BACKGROUND",(0,0),(0,-1),colors.HexColor("#D9ECEF")),("PADDING",(0,0),(-1,-1),6)]))
-    story += [at, Spacer(1, 4*mm), Paragraph("Artifacts & governance", styles["H2x"]), Paragraph("Artifacts: clean/scored Parquet, fitted joblib pipeline, metrics JSON, data-quality report. Secrets: OPENAI_API_KEY only in the host secret store. Monitoring: data quality → drift/calibration/discrimination → review outcomes → controlled retraining and approval. Raw IDs remain in-app; the LLM receives only aggregate facts.", styles["Small"])]
+    story += [at, Spacer(1, 4*mm), Paragraph("Artifacts & governance", styles["H2x"]), Paragraph("Artifacts: clean/scored Parquet, fitted joblib pipeline, metrics JSON, data-quality report. Secrets: OPENROUTER_API_KEY only in the host secret store. Monitoring: data quality → drift/calibration/discrimination → review outcomes → controlled retraining and approval. Raw IDs remain in-app; OpenRouter receives only aggregate facts.", styles["Small"])]
     pdf(DOCS / "architecture.pdf", landscape(A4)).build(story)
 
 

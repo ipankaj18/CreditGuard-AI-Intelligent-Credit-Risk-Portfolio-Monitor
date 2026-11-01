@@ -18,7 +18,7 @@ On a fresh Streamlit Community Cloud deployment, `app/app.py` automatically perf
 
 ## LLM configuration
 
-Copy `.env.example` values into your local environment or add `OPENAI_API_KEY` and optional `OPENAI_MODEL` to the hosted Streamlit secrets store. Never commit key values. Without a key, Ask the Portfolio remains functional using the same deterministic, grounded aggregation layer; only optional LLM wording is skipped. The LLM receives the analyst question and a precomputed aggregate fact—not raw customer or account rows.
+Create a free key at [OpenRouter](https://openrouter.ai/keys), then add `OPENROUTER_API_KEY` and optional `OPENROUTER_MODEL` to the hosted Streamlit secrets store. The default `openrouter/free` router selects an available free model. Never commit key values. Without a key, or when the free tier is rate-limited, Ask the Portfolio still returns its deterministic grounded answer. OpenRouter receives only the analyst question and a precomputed aggregate fact, not raw customer or account rows.
 
 ## Architecture and requirement map
 

@@ -107,12 +107,17 @@ with ask_tab:
     question = st.text_input("Question", placeholder="Which loan type has the highest default rate?")
     if st.button("Answer", type="primary"):
         try:
-            key = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", ""))
+            key = st.secrets.get("OPENROUTER_API_KEY", os.getenv("OPENROUTER_API_KEY", ""))
+            model = st.secrets.get("OPENROUTER_MODEL", os.getenv("OPENROUTER_MODEL", "openrouter/free"))
         except FileNotFoundError:
-            key = os.getenv("OPENAI_API_KEY", "")
-        st.info(answer_question(filtered, question, api_key=key))
+            key = os.getenv("OPENROUTER_API_KEY", "")
+            model = os.getenv("OPENROUTER_MODEL", "openrouter/free")
+        st.info(answer_question(filtered, question, api_key=key, model=model))
     with st.expander("Controls and human review"):
-        st.markdown("**Trigger:** analyst submits a supported portfolio question.  \\n+**False positive:** a technically correct aggregation is misleading because filters or denominators were misunderstood.  \\n+**False negative:** a valid question is declined because its phrasing is unsupported.  \\n+**Human step:** analyst checks the cited grouping and active filters before using the answer. Unsupported questions are declined. With no API key, the verified deterministic answer still works.")
+        st.markdown("""**Trigger:** analyst submits a supported portfolio question.  
+**False positive:** a technically correct aggregation is misleading because filters or denominators were misunderstood.  
+**False negative:** a valid question is declined because its phrasing is unsupported.  
+**Human step:** analyst checks the cited grouping and active filters before using the answer. Unsupported questions are declined. With no OpenRouter key—or when a free model is rate-limited—the verified deterministic answer still works.""")
 
 with anomaly_tab:
     st.subheader("Peer-relative anomaly review")
@@ -131,7 +136,10 @@ with anomaly_tab:
             st.session_state.reviews[review_id] = {"decision": decision, "note": note}
             st.success("Decision recorded for this session.")
     with st.expander("Controls and human review"):
-        st.markdown("**Trigger:** any positive repayment/bureau feature is ≥3 robust SD above its loan-type and income-band peer median.  \\n+**False positive:** a legitimately unusual account is flagged because its peer group is imperfect.  \\n+**False negative:** coordinated or slowly developing deterioration remains within peer norms.  \\n+**Human step:** analyst reviews account drivers and records Confirm/Dismiss. No automated adverse action is taken.")
+        st.markdown("""**Trigger:** any positive repayment/bureau feature is ≥3 robust SD above its loan-type and income-band peer median.  
+**False positive:** a legitimately unusual account is flagged because its peer group is imperfect.  
+**False negative:** coordinated or slowly developing deterioration remains within peer norms.  
+**Human step:** analyst reviews account drivers and records Confirm/Dismiss. No automated adverse action is taken.""")
 
 with model_tab:
     selected = metrics["selected_model"]
