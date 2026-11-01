@@ -14,17 +14,35 @@ sys.path.insert(0, str(ROOT))
 
 from src.anomaly import detect_anomalies
 from src.config import ARTIFACT_DIR
+from src.ingestion import build_analysis_dataset
+from src.model import train_models
 from src.portfolio_qa import answer_question
 
 st.set_page_config(page_title="Credit Risk Portfolio Monitor", page_icon="🏦", layout="wide")
 
 
+def ensure_artifacts() -> None:
+    """Create ephemeral build artifacts on a fresh cloud deployment."""
+    required = [
+        ARTIFACT_DIR / "scored_accounts.parquet",
+        ARTIFACT_DIR / "model_metrics.json",
+        ARTIFACT_DIR / "default_model.joblib",
+    ]
+    if all(path.exists() for path in required):
+        return
+    with st.spinner("Preparing portfolio data and training risk models for this deployment…"):
+        try:
+            dataset = build_analysis_dataset()
+            train_models(dataset)
+        except Exception as exc:
+            st.error("The initial data/model build failed. Open the Streamlit deployment logs for details.")
+            st.exception(exc)
+            st.stop()
+
+
 @st.cache_data
 def load_data() -> pd.DataFrame:
     path = ARTIFACT_DIR / "scored_accounts.parquet"
-    if not path.exists():
-        st.error("Build artifacts are missing. Run `uv run python -m src.build` first.")
-        st.stop()
     return pd.read_parquet(path)
 
 
@@ -33,6 +51,7 @@ def load_anomalies(data: pd.DataFrame) -> pd.DataFrame:
     return detect_anomalies(data)
 
 
+ensure_artifacts()
 data = load_data()
 metrics = json.loads((ARTIFACT_DIR / "model_metrics.json").read_text(encoding="utf-8"))
 

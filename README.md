@@ -14,6 +14,8 @@ uv run streamlit run app/app.py
 
 The second command creates the clean/scored datasets, model, metrics and data-quality artifacts. Generate the final PDFs after the build with `uv run python scripts/make_docs.py`; run checks with `uv run pytest`.
 
+On a fresh Streamlit Community Cloud deployment, `app/app.py` automatically performs this build when the generated artifacts are absent. The first cold start can therefore take about one to two minutes; subsequent reruns reuse the generated files for the life of the cloud instance.
+
 ## LLM configuration
 
 Copy `.env.example` values into your local environment or add `OPENAI_API_KEY` and optional `OPENAI_MODEL` to the hosted Streamlit secrets store. Never commit key values. Without a key, Ask the Portfolio remains functional using the same deterministic, grounded aggregation layer; only optional LLM wording is skipped. The LLM receives the analyst question and a precomputed aggregate fact—not raw customer or account rows.
