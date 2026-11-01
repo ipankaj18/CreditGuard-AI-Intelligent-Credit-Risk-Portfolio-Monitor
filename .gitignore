@@ -1,0 +1,15 @@
+.venv/
+.uv-cache/
+.uv-python/
+.npm-cache/
+__pycache__/
+*.py[cod]
+.env
+.streamlit/secrets.toml
+artifacts/*.parquet
+artifacts/*.joblib
+artifacts/*.json
+.pytest_cache/
+tmp/
+AI Case Study 1.zip
+AI Case Study 1/
